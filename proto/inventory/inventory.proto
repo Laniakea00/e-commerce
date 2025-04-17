@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package inventory;
+
+option go_package = "inventory/inventorypb";
+
+service InventoryService {
+  rpc CreateProduct (Product) returns (ProductResponse);
+  rpc GetProductByID (ProductID) returns (Product);
+  rpc UpdateProduct (Product) returns (ProductResponse);
+  rpc DeleteProductByID (ProductID) returns (DeleteResponse);
+  rpc ListProducts (Empty) returns (ProductList);
+}
+
+message Product {
+  int32 id = 1;
+  string name = 2;
+  string description = 3;
+  float price = 4;
+  int32 stock = 5;
+  int32 category_id = 6;
+}
+
+message ProductID {
+  int32 id = 1;
+}
+
+message ProductResponse {
+  bool success = 1;
+  string message = 2;
+  Product product = 3;
+}
+
+message ProductList {
+  repeated Product products = 1;
+}
+
+message DeleteResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message Empty {}

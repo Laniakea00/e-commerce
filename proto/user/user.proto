@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = "github.com/Laniakea00/e-commerce/proto/user";
+
+service UserService {
+  rpc RegisterUser (RegisterRequest) returns (UserResponse);
+  rpc AuthenticateUser (AuthRequest) returns (UserResponse);
+  rpc GetUserProfile (UserID) returns (User);
+  rpc UpdateUserProfile (User) returns (UserResponse);
+  rpc DeleteUser (UserID) returns (DeleteResponse);
+  rpc ListUsers (Empty) returns (UserList);
+}
+
+message User {
+  int32 id = 1;
+  string username = 2;
+  string email = 3;
+  string password = 4;
+}
+
+message RegisterRequest {
+  string username = 1;
+  string email = 2;
+  string password = 3;
+}
+
+message AuthRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message UserID {
+  int32 id = 1;
+}
+
+message UserResponse {
+  bool success = 1;
+  string message = 2;
+  User user = 3;
+}
+
+message UserList {
+  repeated User users = 1;
+}
+
+message DeleteResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message Empty {}
