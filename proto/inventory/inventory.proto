@@ -20,7 +20,13 @@ message Product {
   float price = 4;
   int32 stock = 5;
   int32 category_id = 6;
+  string size = 7;
+  string color = 8;
+  string gender = 9;
+  string material = 10;
+  string season = 11;
 }
+
 
 message DecreaseStockRequest {
   int32 product_id = 1;

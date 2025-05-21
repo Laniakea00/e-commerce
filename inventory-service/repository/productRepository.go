@@ -23,21 +23,41 @@ func NewProductRepository(db *sql.DB) ProductRepository {
 }
 
 func (r *productRepo) Create(product domain.Product) error {
-	_, err := r.db.Exec("INSERT INTO products (name, description, price, stock, category_id) VALUES (?, ?, ?, ?, ?)",
-		product.Name, product.Description, product.Price, product.Stock, product.CategoryID)
+	_, err := r.db.Exec(`
+		INSERT INTO products 
+		(name, description, price, stock, category_id, size, color, gender, material, season) 
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		product.Name, product.Description, product.Price, product.Stock, product.CategoryID,
+		product.Size, product.Color, product.Gender, product.Material, product.Season)
 	return err
 }
 
 func (r *productRepo) GetByID(id int) (domain.Product, error) {
 	var p domain.Product
-	row := r.db.QueryRow("SELECT id, name, category_id, price, stock, description FROM products WHERE id = ?", id)
-	err := row.Scan(&p.ID, &p.Name, &p.CategoryID, &p.Price, &p.Stock, &p.Description)
+	row := r.db.QueryRow(`
+		SELECT id, name, description, price, stock, category_id, size, color, gender, material, season 
+		FROM products WHERE id = ?`, id)
+	err := row.Scan(&p.ID, &p.Name, &p.Description, &p.Price, &p.Stock, &p.CategoryID,
+		&p.Size, &p.Color, &p.Gender, &p.Material, &p.Season)
 	return p, err
 }
 
 func (r *productRepo) Update(product domain.Product) error {
-	_, err := r.db.Exec("UPDATE products SET name=?, category_id=?, price=?, stock=?, description=? WHERE id=?",
-		product.Name, product.CategoryID, product.Price, product.Stock, product.ID, product.Description)
+	_, err := r.db.Exec(`
+		UPDATE products SET 
+			name = ?, 
+			description = ?, 
+			price = ?, 
+			stock = ?, 
+			category_id = ?, 
+			size = ?, 
+			color = ?, 
+			gender = ?, 
+			material = ?, 
+			season = ?
+		WHERE id = ?`,
+		product.Name, product.Description, product.Price, product.Stock, product.CategoryID,
+		product.Size, product.Color, product.Gender, product.Material, product.Season, product.ID)
 	return err
 }
 
@@ -47,7 +67,9 @@ func (r *productRepo) DeleteByID(id int) error {
 }
 
 func (r *productRepo) GetAll() ([]domain.Product, error) {
-	rows, err := r.db.Query("SELECT id, name, category_id, price, stock, description FROM products")
+	rows, err := r.db.Query(`
+		SELECT id, name, description, price, stock, category_id, size, color, gender, material, season 
+		FROM products`)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +78,8 @@ func (r *productRepo) GetAll() ([]domain.Product, error) {
 	var products []domain.Product
 	for rows.Next() {
 		var p domain.Product
-		err := rows.Scan(&p.ID, &p.Name, &p.CategoryID, &p.Price, &p.Stock, &p.Description)
+		err := rows.Scan(&p.ID, &p.Name, &p.Description, &p.Price, &p.Stock, &p.CategoryID,
+			&p.Size, &p.Color, &p.Gender, &p.Material, &p.Season)
 		if err != nil {
 			return nil, err
 		}

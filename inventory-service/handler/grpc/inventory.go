@@ -26,6 +26,11 @@ func (h *InventoryHandler) CreateProduct(ctx context.Context, req *invpb.Product
 		Price:       float64(req.Price),
 		Stock:       int(req.Stock),
 		CategoryID:  int(req.CategoryId),
+		Size:        req.Size,
+		Color:       req.Color,
+		Gender:      req.Gender,
+		Material:    req.Material,
+		Season:      req.Season,
 	}
 
 	err := h.uc.Create(product)

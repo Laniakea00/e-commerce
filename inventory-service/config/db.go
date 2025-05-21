@@ -20,7 +20,12 @@ func InitDB() *sql.DB {
 		description TEXT,
 		price REAL,
 		stock INTEGER,
-		category_id INTEGER
+		category_id INTEGER,
+		size TEXT,
+		color TEXT,
+		gender TEXT,
+		material TEXT,
+		season TEXT
 );`
 
 	_, err = db.Exec(createProductTable)
