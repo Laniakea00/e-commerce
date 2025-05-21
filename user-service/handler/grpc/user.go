@@ -2,7 +2,7 @@ package grpc
 
 import (
 	"context"
-	"proto/user/userpb"
+	userpb "github.com/Laniakea00/e-commerce/proto/user"
 	"user-service/domain"
 	"user-service/usecase"
 
@@ -100,18 +100,19 @@ func (h *UserHandler) UpdateUserProfile(ctx context.Context, req *userpb.UpdateR
 	}, nil
 }
 
-func (h *UserHandler) DeleteUser(ctx context.Context, req *userpb.UserID) (*userpb.UserResponse, error) {
+func (h *UserHandler) DeleteUser(ctx context.Context, req *userpb.UserID) (*userpb.DeleteResponse, error) {
 	err := h.uc.DeleteUser(int(req.Id))
 	if err != nil {
-		return &userpb.UserResponse{
+		return &userpb.DeleteResponse{
 			Success: false,
 			Message: err.Error(),
 		}, nil
 	}
-	return &userpb.UserResponse{
+	return &userpb.DeleteResponse{
 		Success: true,
 		Message: "User deleted",
 	}, nil
+
 }
 
 func (h *UserHandler) ListUsers(ctx context.Context, _ *userpb.Empty) (*userpb.UserList, error) {

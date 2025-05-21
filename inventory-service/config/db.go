@@ -17,10 +17,12 @@ func InitDB() *sql.DB {
 	CREATE TABLE IF NOT EXISTS products (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		name TEXT,
-		category TEXT,
+		description TEXT,
 		price REAL,
-		stock INTEGER
-	);`
+		stock INTEGER,
+		category_id INTEGER
+);`
+
 	_, err = db.Exec(createProductTable)
 	if err != nil {
 		log.Fatalf("Failed to create table: %v", err)

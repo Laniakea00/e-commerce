@@ -1,4 +1,4 @@
-module github.com/Laniakea00/e-commerce
+module github.com/Laniakea00/e-commerce/proto
 
 go 1.22.0
 

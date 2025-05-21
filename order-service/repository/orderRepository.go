@@ -26,11 +26,23 @@ func NewOrderRepository(db *sql.DB) OrderRepository {
 
 func (r *orderRepository) Create(order *domain.Order) error {
 	itemsJSON, _ := json.Marshal(order.Items)
-	_, err := r.db.Exec(
+
+	result, err := r.db.Exec(
 		"INSERT INTO orders (user_id, status, items) VALUES (?, ?, ?)",
 		order.UserID, order.Status, string(itemsJSON),
 	)
-	return err
+	if err != nil {
+		return err
+	}
+
+	// Получить auto-increment ID из базы
+	id, err := result.LastInsertId()
+	if err != nil {
+		return err
+	}
+	order.ID = int(id) // сохранить обратно в объект
+
+	return nil
 }
 
 func (r *orderRepository) GetByID(id int) (*domain.Order, error) {

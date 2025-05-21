@@ -2,27 +2,39 @@ package config
 
 import (
 	"database/sql"
-	"github.com/gin-gonic/gin"
-	"order-service/handler"
+	"fmt"
+	"log"
+	"net"
+	"order-service/infrastructure/messaging"
+
+	"google.golang.org/grpc"
+
+	handler "order-service/handler/grpc"
 	"order-service/repository"
 	"order-service/usecase"
+
+	orderpb "github.com/Laniakea00/e-commerce/proto/order"
 )
 
-func SetupRouter(db *sql.DB) *gin.Engine {
-	r := gin.Default()
-	orderRepo := repository.NewOrderRepository(db)
-	orderUseCase := usecase.NewOrderUsecase(orderRepo)
-	orderHandler := handler.NewOrderHandler(orderUseCase)
-
-	orders := r.Group("/orders")
-	{
-		orders.POST("", orderHandler.CreateOrder)       // POST /orders
-		orders.GET("/:id", orderHandler.GetOrder)       // GET /orders/:id
-		orders.PATCH("/:id", orderHandler.UpdateStatus) // PATCH /orders/:id
-		orders.PUT("/:id", orderHandler.UpdateOrder)    // PUT /orders/:id
-		orders.DELETE("/:id", orderHandler.DeleteOrder) // DELETE /orders/:id
-		orders.GET("", orderHandler.ListUserOrders)     // GET /orders?user_id=1
+func SetupRouter(db *sql.DB) error {
+	producer, err := messaging.NewNATSProducer("nats://localhost:4222")
+	if err != nil {
+		log.Fatalf("NATS error: %v", err)
 	}
 
-	return r
+	orderRepo := repository.NewOrderRepository(db)
+	orderUseCase := usecase.NewOrderUsecase(orderRepo, producer)
+	orderHandler := handler.NewOrderServer(orderUseCase)
+
+	// Запуск gRPC сервера
+	listener, err := net.Listen("tcp", ":50053")
+	if err != nil {
+		return fmt.Errorf("failed to listen: %w", err)
+	}
+
+	server := grpc.NewServer()
+	orderpb.RegisterOrderServiceServer(server, orderHandler)
+
+	fmt.Println("✅ Order gRPC server running on :50053")
+	return server.Serve(listener)
 }

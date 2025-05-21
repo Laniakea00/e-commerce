@@ -10,6 +10,7 @@ service InventoryService {
   rpc UpdateProduct (Product) returns (ProductResponse);
   rpc DeleteProductByID (ProductID) returns (DeleteResponse);
   rpc ListProducts (Empty) returns (ProductList);
+  rpc DecreaseStock (DecreaseStockRequest) returns (ProductResponse);
 }
 
 message Product {
@@ -19,6 +20,11 @@ message Product {
   float price = 4;
   int32 stock = 5;
   int32 category_id = 6;
+}
+
+message DecreaseStockRequest {
+  int32 product_id = 1;
+  int32 quantity = 2;
 }
 
 message ProductID {

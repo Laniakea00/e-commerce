@@ -2,27 +2,29 @@ package config
 
 import (
 	"database/sql"
-	"github.com/gin-gonic/gin"
-	"inventory-service/handler"
+	"fmt"
+	invpb "github.com/Laniakea00/e-commerce/proto/inventory"
+	handler "inventory-service/handler/grpc"
 	"inventory-service/repository"
 	"inventory-service/usecase"
+
+	"google.golang.org/grpc"
+	"net"
 )
 
-func SetupRouter(db *sql.DB) *gin.Engine {
-	r := gin.Default()
-
+func SetupRouter(db *sql.DB) error {
 	productRepo := repository.NewProductRepository(db)
-	productUsecase := usecase.NewProductUsecase(productRepo)
-	productHandler := handler.NewProductHandler(productUsecase)
+	productUC := usecase.NewProductUsecase(productRepo)
+	productHandler := handler.NewInventoryHandler(productUC)
 
-	products := r.Group("/products")
-	{
-		products.POST("", productHandler.CreateProduct)       // POST /products
-		products.GET("/", productHandler.ListProducts)        // GET /products/
-		products.GET("/:id", productHandler.GetProduct)       // GET /products?id=1
-		products.PATCH("/:id", productHandler.UpdateProduct)  // PATCH /products/:id
-		products.DELETE("/:id", productHandler.DeleteProduct) // DELETE /products/:id
+	listener, err := net.Listen("tcp", ":50052")
+	if err != nil {
+		return fmt.Errorf("failed to listen: %w", err)
 	}
 
-	return r
+	server := grpc.NewServer()
+	invpb.RegisterInventoryServiceServer(server, productHandler)
+
+	fmt.Println("✅ Inventory gRPC server running on :50052")
+	return server.Serve(listener)
 }
