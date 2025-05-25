@@ -1,8 +1,8 @@
 package main
 
 import (
-	"api-gateway/config"
-	"api-gateway/router"
+	"github.com/Laniakea00/e-commerce/api-gateway/config"
+	"github.com/Laniakea00/e-commerce/api-gateway/router"
 )
 
 func main() {

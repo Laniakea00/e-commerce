@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Register - Clothing Store</title>
+    <style>
+        body { font-family: Aria; max-width: 400px; margin: 50px auto; }
+        form { display: flex; flex-direction: column; }
+        input, button { padding: 10px; margin: 10px 0; }
+        .error { color: red; }
+        .success { color: green; }
+    </style>
+</head>
+<body>
+<h1>Register</h1>
+<form id="register-form">
+    <input type="text" id="username" placeholder="Username" required />
+    <input type="email" id="email" placeholder="Email" required />
+    <input type="password" id="password" placeholder="Password" required minlength="3" />
+    <button type="submit">Register</button>
+</form>
+<p id="message"></p>
+
+<script>
+    document.getElementById("register-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const username = document.getElementById("username").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value.trim();
+        const messageEl = document.getElementById("message");
+        messageEl.textContent = "";
+        messageEl.className = "";
+
+        try {
+            const res = await fetch("/users/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, email, password }),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok || !data.success) {
+                messageEl.textContent = data.message || "Registration failed";
+                messageEl.className = "error";
+                return;
+            }
+
+            messageEl.textContent = "Registration successful! You can now log in.";
+            messageEl.className = "success";
+
+            // Очистить форму:
+            document.getElementById("register-form").reset();
+
+        } catch (err) {
+            messageEl.textContent = "Error connecting to server";
+            messageEl.className = "error";
+        }
+    });
+</script>
+</body>
+</html>

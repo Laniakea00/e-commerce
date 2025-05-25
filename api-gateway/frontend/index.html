@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Clothing Store</title>
+  <style>
+    header {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
+      background-color: #eee;
+    }
+    nav a {
+      margin: 0 10px;
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Welcome to Clothing Store</h1>
+  <nav id="nav-links"></nav>
+</header>
+<main>
+  <h2>Find your style today!</h2>
+  <p>Browse our categories and latest items.</p>
+</main>
+</body>
+</html>
+<script>
+  function renderNav() {
+    const nav = document.getElementById("nav-links");
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (user) {
+      nav.innerHTML = `
+        <span>Hello, ${user.username || user.email}</span>
+        <a href="#" id="logout-btn">Logout</a>
+      `;
+
+      document.getElementById("logout-btn").addEventListener("click", (e) => {
+        e.preventDefault();
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
+        window.location.href = "/"; // Перезагрузить или перейти на главную
+      });
+    } else {
+      nav.innerHTML = `
+        <a href="/login">Login</a>
+        <a href="/register">Register</a>
+      `;
+    }
+  }
+
+  renderNav();
+</script>

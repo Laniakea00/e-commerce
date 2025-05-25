@@ -250,6 +250,7 @@ type UserResponse struct {
 	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
 	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
 	User          *User                  `protobuf:"bytes,3,opt,name=user,proto3" json:"user,omitempty"`
+	Token         string                 `protobuf:"bytes,4,opt,name=token,proto3" json:"token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -303,6 +304,13 @@ func (x *UserResponse) GetUser() *User {
 		return x.User
 	}
 	return nil
+}
+
+func (x *UserResponse) GetToken() string {
+	if x != nil {
+		return x.Token
+	}
+	return ""
 }
 
 type UserList struct {
@@ -515,12 +523,13 @@ const file_user_user_proto_rawDesc = "" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\"\x18\n" +
 	"\x06UserID\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x05R\x02id\"b\n" +
+	"\x02id\x18\x01 \x01(\x05R\x02id\"x\n" +
 	"\fUserResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
 	"\amessage\x18\x02 \x01(\tR\amessage\x12\x1e\n" +
 	"\x04user\x18\x03 \x01(\v2\n" +
-	".user.UserR\x04user\",\n" +
+	".user.UserR\x04user\x12\x14\n" +
+	"\x05token\x18\x04 \x01(\tR\x05token\",\n" +
 	"\bUserList\x12 \n" +
 	"\x05users\x18\x01 \x03(\v2\n" +
 	".user.UserR\x05users\"Q\n" +

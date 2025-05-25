@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Inventory - Clothing Store</title>
+    <style>
+        body { font-family: Arial; }
+        .product {
+            border: 1px solid #ccc;
+            margin: 10px;
+            padding: 10px;
+        }
+        .product h3 { margin: 0; }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Inventory</h1>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/login">Login</a>
+        <a href="/register">Register</a>
+    </nav>
+</header>
+
+<main>
+    <div id="products"></div>
+</main>
+
+<script>
+    fetch("http://localhost:8080/products")
+        .then(res => res.json())
+        .then(products => {
+            const container = document.getElementById("products");
+            products.forEach(product => {
+                const div = document.createElement("div");
+                div.className = "product";
+                div.innerHTML = `
+                    <h3>${product.name}</h3>
+                    <p><strong>Price:</strong> $${product.price}</p>
+                    <p><strong>Description:</strong> ${product.description}</p>
+                    <p><strong>Stock:</strong> ${product.stock}</p>
+                    <p><strong>Size:</strong> ${product.size}</p>
+                    <p><strong>Color:</strong> ${product.color}</p>
+                    <p><strong>Gender:</strong> ${product.gender}</p>
+                    <p><strong>Material:</strong> ${product.material}</p>
+                    <p><strong>Season:</strong> ${product.season}</p>
+                    <button onclick="addToCart(${product.id})">Add to Cart</button>
+                `;
+                container.appendChild(div);
+            });
+        })
+        .catch(err => {
+            console.error("Error fetching products:", err);
+        });
+
+    function addToCart(productId) {
+        fetch(`http://localhost:8080/products/${productId}`)
+            .then(res => res.json())
+            .then(product => {
+                const cart = JSON.parse(localStorage.getItem("cart")) || [];
+                cart.push(product);
+                localStorage.setItem("cart", JSON.stringify(cart));
+                alert(`${product.name} added to cart`);
+            })
+            .catch(err => {
+                console.error("Error adding to cart:", err);
+            });
+    }
+</script>
+</body>
+</html>

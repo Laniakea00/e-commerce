@@ -11,6 +11,15 @@ service OrderService {
   rpc ListOrdersByUser (UserID) returns (OrderList);
   rpc UpdateOrder (Order) returns (OrderResponse);
   rpc DeleteOrderByID (OrderID) returns (DeleteResponse);
+  rpc GetOrdersByUser(UserID) returns (OrderList);
+}
+
+message UserID {
+  int32 id = 1;
+}
+
+message OrderList {
+  repeated Order orders = 1;
 }
 
 message Order {
@@ -34,23 +43,15 @@ message OrderID {
   int32 id = 1;
 }
 
-message UserID {
-  int32 id = 1;
-}
-
 message StatusUpdateRequest {
   int32 order_id = 1;
   string status = 2;
 }
 
-message OrderResponse {
+message OrderResponse { 
   bool success = 1;
   string message = 2;
   Order order = 3;
-}
-
-message OrderList {
-  repeated Order orders = 1;
 }
 
 message DeleteResponse {

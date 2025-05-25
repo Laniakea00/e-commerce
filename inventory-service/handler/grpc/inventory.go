@@ -46,11 +46,17 @@ func (h *InventoryHandler) CreateProduct(ctx context.Context, req *invpb.Product
 		Success: true,
 		Message: "Product created successfully",
 		Product: &invpb.Product{
+			Id:          int32(product.ID), // если ID доступен
 			Name:        product.Name,
 			Description: product.Description,
 			Price:       float32(product.Price),
 			Stock:       int32(product.Stock),
 			CategoryId:  int32(product.CategoryID),
+			Size:        product.Size,
+			Color:       product.Color,
+			Gender:      product.Gender,
+			Material:    product.Material,
+			Season:      product.Season,
 		},
 	}, nil
 }
@@ -68,6 +74,11 @@ func (h *InventoryHandler) GetProductByID(ctx context.Context, req *invpb.Produc
 		Price:       float32(product.Price),
 		Stock:       int32(product.Stock),
 		CategoryId:  int32(product.CategoryID),
+		Size:        product.Size,
+		Color:       product.Color,
+		Gender:      product.Gender,
+		Material:    product.Material,
+		Season:      product.Season,
 	}, nil
 }
 
@@ -79,6 +90,11 @@ func (h *InventoryHandler) UpdateProduct(ctx context.Context, req *invpb.Product
 		Price:       float64(req.Price),
 		Stock:       int(req.Stock),
 		CategoryID:  int(req.CategoryId),
+		Size:        req.Size,
+		Color:       req.Color,
+		Gender:      req.Gender,
+		Material:    req.Material,
+		Season:      req.Season,
 	}
 
 	err := h.uc.Update(product)
@@ -126,6 +142,11 @@ func (h *InventoryHandler) ListProducts(ctx context.Context, _ *invpb.Empty) (*i
 			Price:       float32(p.Price),
 			Stock:       int32(p.Stock),
 			CategoryId:  int32(p.CategoryID),
+			Size:        p.Size,
+			Color:       p.Color,
+			Gender:      p.Gender,
+			Material:    p.Material,
+			Season:      p.Season,
 		})
 	}
 

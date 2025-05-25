@@ -2,12 +2,11 @@ package grpc
 
 import (
 	"context"
+	orderpb "github.com/Laniakea00/e-commerce/proto/order"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"order-service/domain"
 	"order-service/usecase"
-
-	orderpb "github.com/Laniakea00/e-commerce/proto/order"
 )
 
 type OrderServer struct {

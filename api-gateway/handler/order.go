@@ -17,6 +17,21 @@ func CreateOrder(client orderpb.OrderServiceClient) gin.HandlerFunc {
 			return
 		}
 
+		// Получаем user_id из контекста (уже валидный из JWT)
+		userIDInterface, exists := c.Get("user_id")
+		if !exists {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+			return
+		}
+		userID, ok := userIDInterface.(int32)
+		if !ok {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid user ID type"})
+			return
+		}
+
+		// Кладём userID в запрос к order-service
+		req.UserId = userID
+
 		resp, err := client.CreateOrder(context.Background(), &req)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -66,20 +81,27 @@ func UpdateOrderStatus(client orderpb.OrderServiceClient) gin.HandlerFunc {
 
 func ListOrdersByUser(client orderpb.OrderServiceClient) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		userIDStr := c.Param("user_id")
-		userID, err := strconv.Atoi(userIDStr)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		userIDInterface, exists := c.Get("user_id")
+		if !exists {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 			return
 		}
 
-		resp, err := client.ListOrdersByUser(context.Background(), &orderpb.UserID{Id: int32(userID)})
+		userID, ok := userIDInterface.(int32)
+		if !ok {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid user ID type"})
+			return
+		}
+
+		res, err := client.ListOrdersByUser(context.Background(), &orderpb.UserID{
+			Id: userID,
+		})
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 
-		c.JSON(http.StatusOK, resp.Orders)
+		c.JSON(http.StatusOK, res.Orders)
 	}
 }
 

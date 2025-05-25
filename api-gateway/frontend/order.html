@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cart - Clothing Store</title>
+    <style>
+        body { font-family: Arial; }
+        .cart-item, .order-item { border-bottom: 1px solid #ccc; padding: 10px 0; }
+        .cart-item h3, .order-item h3 { margin: 0; }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Your Cart</h1>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/inventory">Inventory</a>
+    </nav>
+</header>
+
+<main>
+    <p id="total-info"></p>
+    <div id="cart-items"></div>
+    <button onclick="placeOrder()">Place Order</button>
+
+    <h2>Order History</h2>
+    <div id="order-history"></div>
+</main>
+
+<script>
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    function renderCart() {
+        const container = document.getElementById("cart-items");
+        const totalInfo = document.getElementById("total-info");
+
+        container.innerHTML = "";
+
+        if (cart.length === 0) {
+            container.innerHTML = "<p>Your cart is empty.</p>";
+            totalInfo.textContent = "";
+            return;
+        }
+
+        let total = 0;
+        cart.forEach(item => {
+            total += item.price;
+            const div = document.createElement("div");
+            div.className = "cart-item";
+            div.innerHTML = `
+                <h3>${item.name}</h3>
+                <p>Price: $${item.price}</p>
+            `;
+            container.appendChild(div);
+        });
+
+        totalInfo.textContent = `Total items: ${cart.length}, Total price: $${total.toFixed(2)}`;
+    }
+
+    function placeOrder() {
+        if (cart.length === 0) {
+            alert("Your cart is empty!");
+            return;
+        }
+
+        if (!confirm("Are you sure you want to place this order?")) return;
+
+
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (!user) {
+            alert("You're not logged in");
+            return;
+        }
+
+        fetch("http://localhost:8080/orders", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${localStorage.getItem("token")}`
+            },
+            body: JSON.stringify({
+                user_id: user.id || user._id,
+                items: cart.map(item => ({
+                    product_id: item.id,
+                    quantity: 1
+                }))
+            })
+        })
+
+            .then(res => {
+                if (!res.ok) throw new Error("Order request failed");
+                return res.json();
+            })
+            .then(data => {
+                alert("Order placed!");
+                localStorage.removeItem("cart");
+                window.location.href = "/";
+            })
+            .catch(err => {
+                console.error("Order failed:", err);
+                alert("Error placing order.");
+            });
+    }
+
+    renderCart();
+
+    async function fetchOrderHistory() {
+        try {
+            const user = JSON.parse(localStorage.getItem("user"));
+            if (!user) {
+                document.getElementById("order-history").innerHTML = "<p>Please log in to see your order history.</p>";
+                return;
+            }
+
+            const token = localStorage.getItem("token");
+            const userId = user.id || user._id;
+
+            const res = await fetch(`http://localhost:8080/aggregated?user_id=${userId}`, {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+
+            if (!res.ok) throw new Error(`Failed to fetch: ${res.status} ${res.statusText}`);
+
+            const orders = await res.json();
+
+            const container = document.getElementById("order-history");
+            container.innerHTML = ""; // очищаем контейнер перед выводом
+
+            if (!orders || orders.length === 0) {
+                container.innerHTML = "<p>No orders found.</p>";
+                return;
+            }
+
+            orders.forEach(order => {
+                const div = document.createElement("div");
+                div.className = "order-item";
+                div.innerHTML = `
+                <h3>Order ID: ${order.order_id}</h3>
+                <p>Status: ${order.status}</p>
+                <ul>
+                    ${(order.items && order.items.length > 0)
+                    ? order.items.map(item => `<li>${item.product_name} x${item.quantity}</li>`).join("")
+                    : "<li>No items</li>"
+                }
+                </ul>
+            `;
+                container.appendChild(div);
+            });
+
+        } catch (err) {
+            console.error("Error loading orders:", err);
+            document.getElementById("order-history").innerHTML = `<p>Error loading order history: ${err.message}</p>`;
+        }
+    }
+
+    fetchOrderHistory();
+</script>
+</body>
+</html>

@@ -3,11 +3,10 @@ package grpc
 import (
 	"context"
 	userpb "github.com/Laniakea00/e-commerce/proto/user"
-	"user-service/domain"
-	"user-service/usecase"
-
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"user-service/domain"
+	"user-service/usecase"
 )
 
 type UserHandler struct {
@@ -53,7 +52,7 @@ func (h *UserHandler) AuthenticateUser(ctx context.Context, req *userpb.AuthRequ
 
 	return &userpb.UserResponse{
 		Success: true,
-		Message: "Authenticated",
+		Message: "Login successful",
 		User: &userpb.User{
 			Id:       int32(user.ID),
 			Username: user.Username,

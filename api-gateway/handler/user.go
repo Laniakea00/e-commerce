@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"github.com/Laniakea00/e-commerce/api-gateway/utils"
 	"net/http"
 	"strconv"
 
@@ -29,19 +30,40 @@ func RegisterUser(client userpb.UserServiceClient) gin.HandlerFunc {
 
 func AuthenticateUser(client userpb.UserServiceClient) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var req userpb.AuthRequest
+		var req struct {
+			Email    string `json:"email"`
+			Password string `json:"password"`
+		}
+
 		if err := c.ShouldBindJSON(&req); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
 			return
 		}
 
-		resp, err := client.AuthenticateUser(context.Background(), &req)
+		// gRPC вызов к user-service для проверки логина/пароля
+		resp, err := client.AuthenticateUser(context.Background(), &userpb.AuthRequest{
+			Email:    req.Email,
+			Password: req.Password,
+		})
+		if err != nil || !resp.Success {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
+			return
+		}
+
+		// Генерация токена здесь, в API Gateway
+		token, err := utils.GenerateJWT(int32(resp.User.Id))
 		if err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to generate token"})
 			return
 		}
 
-		c.JSON(http.StatusOK, resp)
+		// Ответ клиенту
+		c.JSON(http.StatusOK, gin.H{
+			"success": true,
+			"message": resp.Message,
+			"user":    resp.User,
+			"token":   token,
+		})
 	}
 }
 
