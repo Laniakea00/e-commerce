@@ -1,0 +1,19 @@
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: 'api-gateway'
+    static_configs:
+      - targets: ['host.docker.internal:2112']  # или IP/порт API Gateway
+
+  - job_name: 'user-service'
+    static_configs:
+      - targets: ['host.docker.internal:2113']  # порт user-service /metrics
+
+  - job_name: 'order-service'
+    static_configs:
+      - targets: ['host.docker.internal:2114']  # порт user-service /metrics
+
+  - job_name: 'inventory-service'
+    static_configs:
+      - targets: [ 'host.docker.internal:2115' ]  # порт user-service /metrics

@@ -51,6 +51,7 @@
 
             // Очистить форму:
             document.getElementById("register-form").reset();
+            window.location.href = "/login";
 
         } catch (err) {
             messageEl.textContent = "Error connecting to server";

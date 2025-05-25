@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="go run" type="CompoundRunConfigurationType">
+    <toRun name="api-gateway" type="GoApplicationRunConfiguration" />
+    <toRun name="inventory" type="GoApplicationRunConfiguration" />
+    <toRun name="order" type="GoApplicationRunConfiguration" />
+    <toRun name="user" type="GoApplicationRunConfiguration" />
+    <method v="2" />
+  </configuration>
+</component>

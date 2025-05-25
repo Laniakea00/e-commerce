@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"fmt"
 	"github.com/Laniakea00/e-commerce/api-gateway/utils"
 	"net/http"
 	"strconv"
@@ -24,7 +25,22 @@ func RegisterUser(client userpb.UserServiceClient) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(http.StatusCreated, resp)
+		// Создаем фейковый токен подтверждения (в будущем храни его в базе)
+		token := "fake-verification-token" // или UUID + база
+		link := fmt.Sprintf("http://localhost:8080/users/verify?email=%s&token=%s", req.Email, token)
+
+		// Отправка письма
+		go func() {
+			if err := utils.SendEmailVerification(req.Email, link); err != nil {
+				fmt.Println("Failed to send verification email:", err)
+			}
+		}()
+
+		c.JSON(http.StatusCreated, gin.H{
+			"success": true,
+			"message": "User registered. Please check your email to verify.",
+			"user":    resp.User,
+		})
 	}
 }
 
@@ -131,5 +147,21 @@ func ListUsers(client userpb.UserServiceClient) gin.HandlerFunc {
 			return
 		}
 		c.JSON(http.StatusOK, resp.Users)
+	}
+}
+
+func VerifyUserEmail() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		email := c.Query("email")
+		token := c.Query("token")
+
+		if email == "" || token == "" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Missing email or token"})
+			return
+		}
+
+		// Здесь могла бы быть логика проверки токена
+		// А пока просто отвечаем, что email подтвержден
+		c.HTML(http.StatusOK, "verified.html", gin.H{"email": email})
 	}
 }

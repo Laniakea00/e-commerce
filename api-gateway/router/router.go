@@ -48,6 +48,7 @@ func SetupRouter(clients *config.Clients) *gin.Engine {
 		users.PUT("/:id", handler.UpdateUserProfile(clients.UserClient))
 		users.DELETE("/:id", handler.DeleteUser(clients.UserClient))
 		users.GET("/", handler.ListUsers(clients.UserClient))
+		users.GET("/verify", handler.VerifyUserEmail())
 	}
 
 	products := r.Group("/products")
