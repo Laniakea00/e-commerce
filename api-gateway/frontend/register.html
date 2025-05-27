@@ -271,10 +271,26 @@
 
         if (theme === 'dark') {
             body.removeAttribute('data-theme');
+            localStorage.setItem('theme', 'light');
             themeToggle.className = 'fas fa-moon';
         } else {
             body.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
             themeToggle.className = 'fas fa-sun';
+        }
+    }
+
+    function applySavedTheme() {
+        const savedTheme = localStorage.getItem('theme');
+        const body = document.body;
+        const themeToggle = document.querySelector('.theme-toggle i');
+
+        if (savedTheme === 'dark') {
+            body.setAttribute('data-theme', 'dark');
+            themeToggle.className = 'fas fa-sun';
+        } else {
+            body.removeAttribute('data-theme');
+            themeToggle.className = 'fas fa-moon';
         }
     }
 
@@ -344,6 +360,7 @@
 
     // Initialize
     renderNav();
+    applySavedTheme(); // Apply saved theme on page load
 </script>
 </body>
 </html>

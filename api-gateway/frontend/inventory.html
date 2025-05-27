@@ -526,7 +526,6 @@
 </main>
 
 <script>
-    // Your existing JavaScript with added features
     let currentPage = 1;
     const productsPerPage = 8;
     let allProducts = [];
@@ -541,10 +540,26 @@
 
         if (theme === 'dark') {
             body.removeAttribute('data-theme');
+            localStorage.setItem('theme', 'light');
             themeToggle.className = 'fas fa-moon';
         } else {
             body.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
             themeToggle.className = 'fas fa-sun';
+        }
+    }
+
+    function applySavedTheme() {
+        const savedTheme = localStorage.getItem('theme');
+        const body = document.body;
+        const themeToggle = document.querySelector('.theme-toggle i');
+
+        if (savedTheme === 'dark') {
+            body.setAttribute('data-theme', 'dark');
+            themeToggle.className = 'fas fa-sun';
+        } else {
+            body.removeAttribute('data-theme');
+            themeToggle.className = 'fas fa-moon';
         }
     }
 
@@ -692,10 +707,94 @@
             });
     }
 
-    // Rest of your existing JavaScript functions...
-    // (searchProducts, prevPage, nextPage, updatePagination, etc.)
+    function fetchProducts() {
+        const container = document.getElementById("products");
+        container.innerHTML = '<div class="loading">Loading products...</div>';
+
+        fetch("http://localhost:8080/products")
+            .then(res => res.json())
+            .then(products => {
+                allProducts = products;
+                filteredProducts = [...products];
+                renderProducts();
+                updatePagination();
+            })
+            .catch(err => {
+                console.error("Error fetching products:", err);
+                container.innerHTML = '<div class="no-products">Error loading products. Please try again later.</div>';
+            });
+    }
+
+    function searchProducts() {
+        const searchInput = document.getElementById("search-input").value.toLowerCase();
+        const categoryFilter = document.getElementById("category-filter").value;
+        const priceFilter = document.getElementById("price-filter").value;
+        const sortFilter = document.getElementById("sort-filter").value;
+
+        filteredProducts = allProducts.filter(product => {
+            const matchesSearch = product.name.toLowerCase().includes(searchInput) ||
+                product.description.toLowerCase().includes(searchInput);
+            const matchesCategory = categoryFilter === "" || product.gender.toLowerCase() === categoryFilter;
+            const matchesPrice = priceFilter === "" ||
+                (priceFilter === "0-50" && product.price <= 50) ||
+                (priceFilter === "50-100" && product.price > 50 && product.price <= 100) ||
+                (priceFilter === "100+" && product.price > 100);
+
+            return matchesSearch && matchesCategory && matchesPrice;
+        });
+
+        // Apply sorting
+        switch (sortFilter) {
+            case "price-low":
+                filteredProducts.sort((a, b) => a.price - b.price);
+                break;
+            case "price-high":
+                filteredProducts.sort((a, b) => b.price - a.price);
+                break;
+            case "popular":
+                filteredProducts.sort((a, b) => b.popularity - a.popularity);
+                break;
+            case "newest":
+            default:
+                filteredProducts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                break;
+        }
+
+        currentPage = 1;
+        renderProducts();
+        updatePagination();
+    }
+
+    function prevPage() {
+        if (currentPage > 1) {
+            currentPage--;
+            renderProducts();
+            updatePagination();
+        }
+    }
+
+    function nextPage() {
+        const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            renderProducts();
+            updatePagination();
+        }
+    }
+
+    function updatePagination() {
+        const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+        document.getElementById("page-info").textContent = `Page ${currentPage} of ${totalPages}`;
+        document.getElementById("prev-page").disabled = currentPage === 1;
+        document.getElementById("next-page").disabled = currentPage === totalPages || totalPages === 0;
+    }
+
+    document.getElementById("category-filter").addEventListener("change", searchProducts);
+    document.getElementById("price-filter").addEventListener("change", searchProducts);
+    document.getElementById("sort-filter").addEventListener("change", searchProducts);
 
     renderNav();
+    applySavedTheme(); // Apply saved theme on page load
     fetchProducts();
 </script>
 </body>

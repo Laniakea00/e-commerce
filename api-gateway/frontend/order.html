@@ -496,12 +496,15 @@
 
         if (theme === 'dark') {
             body.removeAttribute('data-theme');
+            localStorage.setItem('theme', 'light');
             themeToggle.className = 'fas fa-moon';
         } else {
             body.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
             themeToggle.className = 'fas fa-sun';
         }
     }
+
 
     function showToast(message, type = 'success') {
         const toast = document.createElement('div');
@@ -666,6 +669,21 @@
         }, 2000);
     }
 
+    function applySavedTheme() {
+        const savedTheme = localStorage.getItem('theme');
+        const body = document.body;
+        const themeToggle = document.querySelector('.theme-toggle i');
+
+        if (savedTheme === 'dark') {
+            body.setAttribute('data-theme', 'dark');
+            themeToggle.className = 'fas fa-sun';
+        } else {
+            body.removeAttribute('data-theme');
+            themeToggle.className = 'fas fa-moon';
+        }
+    }
+
+
     async function fetchOrderHistory() {
         try {
             const user = JSON.parse(localStorage.getItem("user"));
@@ -721,6 +739,7 @@
     renderNav();
     renderCart();
     fetchOrderHistory();
+    applySavedTheme();
 </script>
 </body>
 </html>
