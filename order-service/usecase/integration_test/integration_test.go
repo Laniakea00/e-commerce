@@ -28,19 +28,9 @@ func (m *mockProducer) PublishOrderCreated(order domain.Order) error {
 
 func setupTestDB(t *testing.T) {
 	var err error
-	db, err = sql.Open("sqlite", "././orders_test.db")
+	db, err = sql.Open("sqlite", "orders_test.db")
 	if err != nil {
 		t.Fatalf("Failed to connect to test database: %v", err)
-	}
-
-	// Clear existing data
-	_, err = db.Exec("DELETE FROM order_items")
-	if err != nil {
-		t.Fatalf("Failed to clear order_items table: %v", err)
-	}
-	_, err = db.Exec("DELETE FROM orders")
-	if err != nil {
-		t.Fatalf("Failed to clear orders table: %v", err)
 	}
 
 	// Create the orders table
@@ -69,6 +59,16 @@ func setupTestDB(t *testing.T) {
     `)
 	if err != nil {
 		t.Fatalf("Failed to create order_items table: %v", err)
+	}
+
+	// Clear existing data
+	_, err = db.Exec("DELETE FROM order_items")
+	if err != nil {
+		t.Fatalf("Failed to clear order_items table: %v", err)
+	}
+	_, err = db.Exec("DELETE FROM orders")
+	if err != nil {
+		t.Fatalf("Failed to clear orders table: %v", err)
 	}
 
 	orderRepo = repository.NewOrderRepository(db)
