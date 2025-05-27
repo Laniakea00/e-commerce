@@ -1,33 +1,329 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <title>Login - Clothing Store</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fashion Hub - Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { font-family: Arial; max-width: 400px; margin: 50px auto; }
-        form { display: flex; flex-direction: column; }
-        input, button { padding: 10px; margin: 10px 0; }
-        .error { color: red; }
-        .success { color: green; }
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --text-color: #2c3e50;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] {
+            --primary-color: #ecf0f1;
+            --accent-color: #e74c3c;
+            --text-color: #ecf0f1;
+            --bg-color: #2c3e50;
+            --card-bg: #34495e;
+            --shadow-color: rgba(255, 255, 255, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: var(--transition);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        header {
+            background: var(--card-bg);
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 20px var(--shadow-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo img {
+            width: 30px;
+            height: 30px;
+        }
+
+        nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        nav a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        nav a:hover {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background: var(--shadow-color);
+        }
+
+        main {
+            max-width: 400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .login-container {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 20px var(--shadow-color);
+            padding: 2rem;
+            animation: slideUp 0.5s ease;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .login-header h1 {
+            font-size: 1.8rem;
+            color: var(--text-color);
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--shadow-color);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus {
+            border-color: var(--accent-color);
+            outline: none;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        .message {
+            margin-top: 1rem;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        .error {
+            color: var(--danger-color);
+        }
+
+        .success {
+            color: var(--success-color);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            nav {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
     </style>
 </head>
 <body>
-<h1>Login</h1>
-<form id="login-form">
-    <input type="email" id="email" placeholder="Email" required />
-    <input type="password" id="password" placeholder="Password" required />
-    <button type="submit">Log In</button>
-</form>
-<p id="message"></p>
+<header>
+    <div class="header-content">
+        <a href="/" class="logo">
+            <i class="fas fa-tshirt"></i>
+            Fashion Hub
+        </a>
+        <nav id="nav-links"></nav>
+        <button class="theme-toggle" onclick="toggleTheme()">
+            <i class="fas fa-moon"></i>
+        </button>
+    </div>
+</header>
+
+<main>
+    <div class="login-container">
+        <div class="login-header">
+            <h1>Login</h1>
+        </div>
+        <form id="login-form">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" placeholder="Email" required />
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Password" required />
+            </div>
+            <button type="submit" class="login-btn">
+                <i class="fas fa-sign-in-alt"></i>
+                Log In
+            </button>
+        </form>
+        <p id="message" class="message"></p>
+    </div>
+</main>
 
 <script>
+    function toggleTheme() {
+        const body = document.body;
+        const theme = body.getAttribute('data-theme');
+        const themeToggle = document.querySelector('.theme-toggle i');
+
+        if (theme === 'dark') {
+            body.removeAttribute('data-theme');
+            localStorage.setItem('theme', 'light');
+            themeToggle.className = 'fas fa-moon';
+        } else {
+            body.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+            themeToggle.className = 'fas fa-sun';
+        }
+    }
+
+    function applySavedTheme() {
+        const savedTheme = localStorage.getItem('theme');
+        const body = document.body;
+        const themeToggle = document.querySelector('.theme-toggle i');
+
+        if (savedTheme === 'dark') {
+            body.setAttribute('data-theme', 'dark');
+            themeToggle.className = 'fas fa-sun';
+        } else {
+            body.removeAttribute('data-theme');
+            themeToggle.className = 'fas fa-moon';
+        }
+    }
+
+    function renderNav() {
+        const nav = document.getElementById("nav-links");
+        const user = JSON.parse(localStorage.getItem("user"));
+
+        if (user) {
+            nav.innerHTML = `
+            <span><i class="fas fa-user"></i> ${user.username || user.email}</span>
+            <a href="/"><i class="fas fa-home"></i> Home</a>
+            <a href="/order"><i class="fas fa-shopping-cart"></i> Cart</a>
+            <a href="/profile"><i class="fas fa-user-circle"></i> Profile</a>
+            <a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        `;
+
+            document.getElementById("logout-btn").addEventListener("click", (e) => {
+                e.preventDefault();
+                localStorage.removeItem("user");
+                localStorage.removeItem("token");
+                window.location.href = "/";
+            });
+        } else {
+            nav.innerHTML = `
+            <a href="/login"><i class="fas fa-sign-in-alt"></i> Login</a>
+            <a href="/register"><i class="fas fa-user-plus"></i> Register</a>
+        `;
+        }
+    }
+
     document.getElementById("login-form").addEventListener("submit", async (e) => {
         e.preventDefault();
         const email = document.getElementById("email").value.trim();
         const password = document.getElementById("password").value.trim();
         const messageEl = document.getElementById("message");
         messageEl.textContent = "";
-        messageEl.className = "";
+        messageEl.className = "message";
 
         try {
             const res = await fetch("/users/login", {
@@ -40,12 +336,12 @@
 
             if (!res.ok || !data.success) {
                 messageEl.textContent = data.message || "Login failed";
-                messageEl.className = "error";
+                messageEl.className = "message error";
                 return;
             }
 
             messageEl.textContent = "Login successful!";
-            messageEl.className = "success";
+            messageEl.className = "message success";
 
             localStorage.setItem("user", JSON.stringify(data.user));
             localStorage.setItem("token", data.token);
@@ -53,9 +349,13 @@
             window.location.href = "/order";
         } catch (err) {
             messageEl.textContent = "Error connecting to server";
-            messageEl.className = "error";
+            messageEl.className = "message error";
         }
     });
+
+    // Initialize
+    renderNav();
+    applySavedTheme(); // Apply saved theme on page load
 </script>
 </body>
 </html>

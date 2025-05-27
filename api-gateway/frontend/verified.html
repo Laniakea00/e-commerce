@@ -1,12 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Email Verified</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fashion Hub - Email Verified</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #2c3e50;
+      --accent-color: #e74c3c;
+      --text-color: #2c3e50;
+      --bg-color: #f8f9fa;
+      --card-bg: #ffffff;
+      --shadow-color: rgba(0, 0, 0, 0.1);
+      --success-color: #2ecc71;
+      --danger-color: #e74c3c;
+      --border-radius: 12px;
+      --transition: all 0.3s ease;
+    }
+
+    [data-theme="dark"] {
+      --primary-color: #ecf0f1;
+      --accent-color: #e74c3c;
+      --text-color: #ecf0f1;
+      --bg-color: #2c3e50;
+      --card-bg: #34495e;
+      --shadow-color: rgba(255, 255, 255, 0.05);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      transition: var(--transition);
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+
+    main {
+      max-width: 600px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+    }
+
+    .verified-container {
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      box-shadow: 0 4px 20px var(--shadow-color);
+      padding: 2rem;
+      text-align: center;
+      animation: slideUp 0.5s ease;
+    }
+
+    .verified-header {
+      margin-bottom: 2rem;
+    }
+
+    .verified-header h1 {
+      font-size: 1.8rem;
+      color: var(--success-color);
+    }
+
+    .verified-message {
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
+      color: var(--text-color);
+    }
+
+    .login-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem 2rem;
+      background: var(--accent-color);
+      color: white;
+      text-decoration: none;
+      border-radius: var(--border-radius);
+      transition: var(--transition);
+    }
+
+    .login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+      main {
+        padding: 0 1rem;
+      }
+    }
+  </style>
 </head>
 <body>
-<h1>Email verification successful!</h1>
-<p>Your email {{.email}} has been verified.</p>
-<a href="/login">Go to Login</a>
+<main>
+  <div class="verified-container">
+    <div class="verified-header">
+      <h1>Email verification successful!</h1>
+    </div>
+    <div class="verified-message">
+      <p>Your email user@example.com has been verified.</p>
+    </div>
+    <a href="/login" class="login-btn">
+      <i class="fas fa-sign-in-alt"></i>
+      Go to Login
+    </a>
+  </div>
+</main>
 </body>
 </html>
